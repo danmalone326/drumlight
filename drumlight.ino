@@ -1,22 +1,20 @@
 #include <FastLED.h>
 boolean debug = false;
 
-#define NUM_LEDS 8
+#define NUM_LEDS 22
 CRGB leds[NUM_LEDS];
 const int ledPin = 7;
 
 #define DRUM1 0    // Our analog pin
 
-unsigned char brightness = 60;
+unsigned char brightness = 255;
 
-unsigned int lastColor = 1;
 boolean lightOn = false;
-CRGB color1 = 0x0000FF;
-CRGB color2 = 0xFFD700;
+
 unsigned int drumThreshold = 75;
 unsigned long drumMinBetween = 60;
 
-int val = 0;      // Initializing the variable for the voltage value
+int val = 0;      // Initializing the variable for the drum sensor
 unsigned int count = 0;
 unsigned long lastDrum = 0;
 
@@ -77,24 +75,6 @@ class lightBar {
       }
     }
 
-    //    void standardFlash(unsigned int onBuffer, unsigned int offBuffer, unsigned int onDuration) {
-    //      copyToDisplayBuffer(onBuffer);
-    //      show();
-    //      delay(onDuration);
-    //
-    //      copyToDisplayBuffer(offBuffer);
-    //      show();
-    //    }
-    //
-    //    void multiFlash(unsigned int onBuffer, unsigned int offBuffer, unsigned int numFlashes, unsigned int onDuration, unsigned int betweenDuration) {
-    //      int counter;
-    //
-    //      for (counter = 0; counter < numFlashes; counter++) {
-    //        standardFlash(onBuffer, offBuffer, onDuration);
-    //        delay(betweenDuration);
-    //      }
-    //    }
-
     void off () {
       setAll(0x000000);
     }
@@ -108,13 +88,19 @@ class lightBar {
 
 class drumLightbar {
   public:
-    unsigned int numLeds = 8;
     CRGB *leds;
-    CRGB color = 0x000000;
+    unsigned int numLeds = 0;
+    CRGB *colors;
+    unsigned int numColors = 0;
+
+    unsigned char currentColorIndex = 0;
+    CRGB currentColor;
+
+    //    CRGB color = 0x000000;
 
     const unsigned long millisOn = 60;
-    const unsigned long millisFastOff = 60;
-    const unsigned long millisSlowOff = 250;
+    const unsigned long millisFastOff = 160;
+    const unsigned long millisSlowOff = 1000;
 
     const float dimSlowStartPercent = 0.25;
 
@@ -124,17 +110,18 @@ class drumLightbar {
 
     boolean allOff = true;
 
-    unsigned long timer = 0;
-    boolean state = false;
-    unsigned long mod = 0;
-
-    drumLightbar (struct CRGB *leds, unsigned int numLeds) {
+    drumLightbar (struct CRGB *leds, unsigned int numLeds,
+                  struct CRGB *colors, unsigned int numColors) {
       this->leds = leds;
       this->numLeds = numLeds;
+      this->colors = colors;
+      this->numColors = numColors;
+      this->currentColorIndex = numColors - 1;
     }
 
-    void setColor(CRGB color) {
-      this->color = color;
+    void nextColor() {
+      currentColorIndex = (currentColorIndex + 1) % numColors;
+      currentColor = colors[currentColorIndex];
     }
 
     void setAll(float percentOn) {
@@ -142,7 +129,7 @@ class drumLightbar {
       CRGB currentDim;
 
       for (counter = 0; counter < numLeds; counter++) {
-        currentDim = color;
+        currentDim = currentColor;
         currentDim.fadeLightBy(255 - int(255 * percentOn));
         leds[counter] = currentDim;
       }
@@ -156,7 +143,7 @@ class drumLightbar {
       CRGB currentDim;
 
       for (counter = 0; counter < numLeds; counter++) {
-        currentDim = color;
+        currentDim = currentColor;
         if (counter > currentPosition) {
           //      currentDim = 0xFF0000;
           currentDimPercent = 1 / pow(4, counter - currentPosition);
@@ -177,6 +164,7 @@ class drumLightbar {
       if (! isOn) {
         isOn = true;
         allOff = false;
+        nextColor();
         if (millisCurrent > (millisLastOff + millisFastOff)) {
           millisLastOn = millisCurrent;
         }
@@ -225,7 +213,15 @@ class drumLightbar {
 };
 
 lightBar myLightBar(&leds[0]);
-drumLightbar myDrumLightbar(&leds[0],NUM_LEDS);
+
+//CRGB color1 = 0x0000FF;
+//CRGB color2 = 0xFFD700;
+CRGB agColors[] = { 0x0000FF, 0xFFD700 };
+CRGB christmasColors[] = { 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF };
+CRGB valentinesColors[] = { 0xCE4444, 0x65015C, 0xFF7BD2, 0x65015C };
+drumLightbar myDrumLightbar(&leds[0], NUM_LEDS,
+                            &agColors[0],
+                            sizeof(agColors) / sizeof(CRGB));
 
 void setup()
 {
@@ -249,23 +245,10 @@ void setup()
 
 void loop()
 {
-  CRGB currentColor = 0x000000;
   val = analogRead(DRUM1);  // Read the voltage
 
   if ((val > drumThreshold) && (!lightOn)) {
     lightOn = true;
-    if (lastColor == 2) {
-      currentColor = color1;
-      myDrumLightbar.setColor(currentColor);
-      lastColor = 1;
-    }
-    else if (lastColor == 1) {
-      currentColor = color2;
-      myDrumLightbar.setColor(currentColor);
-      lastColor = 2;
-    }
-//    myLightBar.setAll(currentColor);
-//    FastLED.show();
     if (debug) {
       Serial.print("O");
     }
@@ -274,8 +257,6 @@ void loop()
 
   if ((val <= drumThreshold) && (lightOn) && (lastDrum + drumMinBetween < millis())) {
     lightOn = false;
-//    myLightBar.setAll(0x000000);
-//    FastLED.show();
     if (debug) {
       Serial.print("X");
     }
@@ -287,21 +268,17 @@ void loop()
     myDrumLightbar.off();
   }
 
-  if (val > 1) {
-    Serial.print(val);        // Print the voltage to the terminal
-    Serial.print("  ");
-    if (count++ > 10) {
-      Serial.println("");
-      count = 0;
-    }
-    if (debug) {
-      Serial.print("o");
-    }
-  } else if (lastDrum + 2000 < millis()) {
-    Serial.println(" ");
-    lastDrum = millis() + 10000;
-    if (debug) {
-      Serial.print("x");
+  if (debug) {
+    if (val > 5) {
+      Serial.print(val);        // Print the voltage to the terminal
+      Serial.print("  ");
+      if (count++ > 10) {
+        Serial.println("");
+        count = 0;
+      }
+    } else if (lastDrum + 2000 < millis()) {
+      Serial.println(" ");
+      lastDrum = millis() + 10000;
     }
   }
 }

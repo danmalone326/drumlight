@@ -2,7 +2,7 @@
 #include "DrumSensor.h"
 #include "DrumLight.h"
 
-boolean debug = false;
+boolean debug = true;
 
 #define NUM_LEDS 22
 CRGB leds[NUM_LEDS];
@@ -13,13 +13,15 @@ const int drumSensorPin = 0;
 unsigned char brightness = 255;
 
 CRGB agColors[] = { 0x0000FF, 0xFFD700 };
-CRGB christmasColors[] = { 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF };
+CRGB christmasColors[] = { 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00 };
 CRGB valentinesColors[] = { 0xCE4444, 0x65015C, 0xFF7BD2, 0x65015C };
+CRGB calpolyColors[] = { 0x00FF00, 0xFFFF00 };
 
 DrumSensor myDrumSensor(drumSensorPin);
 DrumLight  myDrumLight(&leds[0], NUM_LEDS,
-                       &agColors[0],
-                       sizeof(agColors) / sizeof(CRGB));
+                       &christmasColors[0],
+                       sizeof(christmasColors) / sizeof(CRGB),
+                       1);
 
 void myTapBegin() {
   if (debug) {

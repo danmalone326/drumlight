@@ -19,7 +19,8 @@ class DrumLight
   public:
     // ----- Constructor -----
     DrumLight(struct CRGB *_leds, unsigned int _numLeds,
-              struct CRGB *_colors, unsigned int _numColors);
+              struct CRGB *_colors, unsigned int _numColors,
+              unsigned int _everyX);
 
     // ----- Set runtime parameters -----
 
@@ -39,29 +40,31 @@ class DrumLight
     unsigned int numLeds = 0;
     CRGB *colors;
     unsigned int numColors = 0;
+    unsigned int everyX = 1;
 
     unsigned char currentColorIndex = 0;
-    CRGB currentColor;
+    unsigned char currentXIndex = 0;
 
-    int state = 0;
-    
     const unsigned long millisOn = 60;
     const unsigned long millisFastOff = 160;
     const unsigned long millisSlowOff = 1000;
-
     const float dimSlowStartPercent = 0.25;
 
-    unsigned long millisLastOn = 0;
-    unsigned long millisLastOff = 0;
-    boolean isOn = false;
+    // States
+    // 0 = All LEDs are off
+    // 1 = tap just started
+    // 2 = tap started, has not finished yet, LEDs getting brighter
+    // 3 = tap just finished
+    // 4 = tap finished, LEDs still fading
+    unsigned int *state;
+    unsigned long *millisLastOn;
+    unsigned long *millisLastOff;
+    CRGB *currentColor;
 
-    boolean allOff = true;
-
-    void nextColor();
-    void setAll(float percentOn);
-    void setLEDs(float percentOn);
-    void on();
-    void off();
+    CRGB nextColor();
+    void setAll(float percentOn, unsigned char xIndex = 0);
+    void wipeLEDs(float percentOn, unsigned char xIndex = 0);
+    void wipeLoop(unsigned char xIndex = 0);
 
 };
 

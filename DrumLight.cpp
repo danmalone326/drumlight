@@ -1,5 +1,5 @@
 // -----
-// DrumLight.h - Library for controlling lights around a drum
+// DrumLight.cpp - Library for controlling lights around a drum
 // This class is implemented for use with the Arduino environment.
 // Copyright (c) by Dan Malone
 // This work is licensed under a BSD style license.
@@ -61,7 +61,7 @@ void DrumLight::wipeLEDs(float percentOn, unsigned char xIndex = 0) {
     currentDim = currentColor[xIndex];
     if (counter > currentPosition) {
       currentDimPercent = 1 / pow(4, counter - currentPosition);
-      if ((state == 4) && (currentDimPercent < dimSlowStartPercent)) {
+      if ((state[xIndex] == 4) && (currentDimPercent < dimSlowStartPercent)) {
         currentDimPercent = dimSlowStartPercent;
       }
       currentDim.fadeLightBy(255 - int(255 * currentDimPercent));

@@ -47,12 +47,12 @@ void DrumSensor::setBetweenTicks(int ticks) {
 
 
 // save function for tap events
-void DrumSensor::attachTapBegin(callbackFunction newFunction)
+void DrumSensor::attachTapBegin(tapCallbackFunction newFunction)
 {
   _tapBeginFunc = newFunction;
 } // attachTapBegin
 
-void DrumSensor::attachTapEnd(callbackFunction newFunction)
+void DrumSensor::attachTapEnd(tapCallbackFunction newFunction)
 {
   _tapEndFunc = newFunction;
 } // attachTapEnd

@@ -18,7 +18,7 @@
 // ----- Callback function types -----
 
 extern "C" {
-  typedef void (*callbackFunction)(void);
+  typedef void (*tapCallbackFunction)(void);
 }
 
 
@@ -40,8 +40,8 @@ public:
   void setBetweenTicks(int ticks);
 
   // attach functions that will be called at the begin and end of the tap.
-  void attachTapBegin(callbackFunction newFunction);
-  void attachTapEnd(callbackFunction newFunction);
+  void attachTapBegin(tapCallbackFunction newFunction);
+  void attachTapEnd(tapCallbackFunction newFunction);
 
   // ----- State machine functions -----
 
@@ -55,8 +55,8 @@ private:
   int _betweenTicks; // millisec required between stroke/taps
   
   // These variables will hold functions for the events
-  callbackFunction _tapBeginFunc;
-  callbackFunction _tapEndFunc;
+  tapCallbackFunction _tapBeginFunc;
+  tapCallbackFunction _tapEndFunc;
 
   // These variables that hold information across the upcoming tick calls.
   // They are initialized once on program start and are updated every time the tick function is called.

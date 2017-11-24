@@ -11,7 +11,7 @@ const int ledPin = 7;
 
 const int drumSensorPin = 0;
 
-unsigned char drumBrightness = 255;
+unsigned char drumBrightness = 128;
 unsigned char twinkleBrightness = 60;
 unsigned long millisLastTap = 0;
 
@@ -23,24 +23,31 @@ unsigned long millisToIdle = 5000;
 // 1 = twinkle
 unsigned char state = 0;
 
-CRGB agColors[] = { 0x0000FF, 0xFFD700 };
-CRGB christmasColors[] = { 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00 };
-CRGB valentinesColors[] = { 0xCE4444, 0x65015C, 0xFF7BD2, 0x65015C };
-CRGB calpolyColors[] = { 0x00FF00, 0xFFFF00 };
+// AGHS Colors
+//CRGB colors[] = { 0x0000FF, 0xFFD700 };
+
+// Christmas Colors
+CRGB colors[] = { 0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00 };
+
+// Valentines Colors
+//CRGB colors[] = { 0xCE4444, 0x65015C, 0xFF7BD2, 0x65015C };
+
+// Cal Poly Colors
+//CRGB calpolyColors[] = { 0x00FF00, 0xFFFF00 };
+
+unsigned char numColors = sizeof(colors) / sizeof(CRGB);
+unsigned char currentColorIndex = numColors - 1;
 
 DrumSensor myDrumSensor(drumSensorPin);
-DrumLight  myDrumLight(&leds[0], NUM_LEDS,
-                       &christmasColors[0],
-                       sizeof(christmasColors) / sizeof(CRGB),
-                       1);
+DrumLight  myDrumLight(&leds[0], NUM_LEDS, 1);
 ChristmasLights  myChristmasLights(&leds[0], NUM_LEDS,
-                                   &christmasColors[0],
-                                   sizeof(christmasColors) / sizeof(CRGB));
+                                   &colors[0], numColors);
 
 void myTapBegin() {
   if (debug) {
     Serial.println("Tap Begin");
   }
+  myDrumLight.setNextColor(nextColor());
   myDrumLight.tapBegin();
   millisLastTap = millis();
 }
@@ -51,6 +58,12 @@ void myTapEnd() {
   }
   myDrumLight.tapEnd();
 }
+
+CRGB nextColor() {
+  currentColorIndex = (currentColorIndex + 1) % numColors;
+  return colors[currentColorIndex];
+}
+
 
 void setup()
 {

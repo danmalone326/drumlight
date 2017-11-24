@@ -12,13 +12,9 @@
 
 
 DrumLight::DrumLight (struct CRGB *_leds, unsigned int _numLeds,
-                      struct CRGB *_colors, unsigned int _numColors,
                       unsigned int _everyX = 1) {
   leds = _leds;
   numLeds = _numLeds;
-  colors = _colors;
-  numColors = _numColors;
-  currentColorIndex = _numColors - 1;
   everyX = _everyX;
 
   state = (unsigned int *)malloc(sizeof(unsigned int) * _everyX);
@@ -35,9 +31,8 @@ DrumLight::DrumLight (struct CRGB *_leds, unsigned int _numLeds,
   }
 }
 
-CRGB DrumLight::nextColor() {
-  currentColorIndex = (currentColorIndex + 1) % numColors;
-  return colors[currentColorIndex];
+void DrumLight::setNextColor(CRGB _color) {
+  nextColor = _color;
 }
 
 void DrumLight::setAll(float percentOn, unsigned char xIndex = 0) {
@@ -76,7 +71,8 @@ void DrumLight::wipeLoop(unsigned char xIndex = 0) {
 
   if (state[xIndex] == 1) {
     state[xIndex] = 2;
-    currentColor[xIndex] = nextColor();
+    currentColor[xIndex] = nextColor;
+
     if (millisCurrent > (millisLastOff[xIndex] + (millisFastOff + millisSlowOff))) {  // last flash is already off
       millisLastOn[xIndex] = millisCurrent;
     }

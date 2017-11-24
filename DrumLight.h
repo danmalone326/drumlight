@@ -19,10 +19,11 @@ class DrumLight
   public:
     // ----- Constructor -----
     DrumLight(struct CRGB *_leds, unsigned int _numLeds,
-              struct CRGB *_colors, unsigned int _numColors,
               unsigned int _everyX);
 
     // ----- Set runtime parameters -----
+
+    void setNextColor(CRGB _color);
 
     // set # minimum value on the analog input for the start of a stroke/tap.
     // void setDetectLevel(int level);
@@ -38,12 +39,6 @@ class DrumLight
   private:
     CRGB *leds;
     unsigned int numLeds = 0;
-    CRGB *colors;
-    unsigned int numColors = 0;
-    unsigned int everyX = 1;
-
-    unsigned char currentColorIndex = 0;
-    unsigned char currentXIndex = 0;
 
     const unsigned long millisOn = 60;
     const unsigned long millisFastOff = 160;
@@ -61,7 +56,10 @@ class DrumLight
     unsigned long *millisLastOff;
     CRGB *currentColor;
 
-    CRGB nextColor();
+    unsigned int everyX = 1;
+    unsigned char currentXIndex = 0;
+    CRGB nextColor = 0x000000;
+
     void setAll(float percentOn, unsigned char xIndex = 0);
     void wipeLEDs(float percentOn, unsigned char xIndex = 0);
     void wipeLoop(unsigned char xIndex = 0);

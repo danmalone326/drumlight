@@ -42,7 +42,15 @@ class ChristmasLights
     const unsigned long millisOff = 100;
     const unsigned long millisDiff = 750;
     const float minBright = 0.05;
-    uint16_t blinkThreshold = 20;
+    uint16_t blinkThreshold = 40;
+
+    unsigned long millisStateStart = 0;
+    unsigned long millisStateChange = 5000;
+    unsigned long millisScrollChange = 0;
+    unsigned long millisScrollRate = 1500;
+    unsigned char scrollCounter = numColors;
+    unsigned char scrollState = 0;
+
  
     // States
     // 0 = LED is on full

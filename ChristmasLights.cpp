@@ -51,16 +51,47 @@ void ChristmasLights::loop() {
   unsigned long currentMillis = millis();
   unsigned long delta;
 
+//  if (scrollState == 0) {
+//    if (currentMillis > millisStateStart + millisStateChange) {
+//      scrollState = 1;
+//      millisStateStart = currentMillis;
+//      millisStateChange = 15000;
+//    }
+//  } else if (scrollState == 1) {
+//    scrollState = 2;
+//  } else if (scrollState == 2) {
+//    if (currentMillis > millisStateStart + millisStateChange) {
+//      scrollState = 0;
+//      millisStateStart = currentMillis;
+//      millisStateChange = 2000;
+//    }
+//    if (currentMillis > (millisScrollChange + (millisScrollRate / numColors))) {
+//      scrollState = 1;
+//      millisScrollChange = currentMillis;
+//      scrollCounter = (scrollCounter + 1) % numColors;
+//    }
+//  }
+
   for (counter = 0; counter < numLeds; counter++) {
-    delta = currentMillis - millisLastChange[counter];
-    if (state[counter] == 0) {
-      percentOn = 1.0;
-      if (random16() < blinkThreshold) {
+    if (scrollState == 0) {
+      if (state[counter] == 0) {
+        percentOn = 1.0;
+        if (random16() < blinkThreshold) {
+          state[counter] = 1;
+          millisLastChange[counter] = currentMillis;
+          millisUntilChange[counter] = millisOff + random16(millisDiff);
+        }
+      }
+    } else if (scrollState == 1) {
+      if ((counter % numColors) == scrollCounter) {
         state[counter] = 1;
         millisLastChange[counter] = currentMillis;
-        millisUntilChange[counter] = millisOff + random16(millisDiff);
+        millisUntilChange[counter] = millisScrollRate / 2;
       }
-    } else if (state[counter] == 1) {
+    }
+
+    delta = currentMillis - millisLastChange[counter];
+    if (state[counter] == 1) {
       if (delta > millisUntilChange[counter] ) {
         state[counter] = 2;
         percentOn = minBright;
@@ -77,6 +108,9 @@ void ChristmasLights::loop() {
       } else {
         percentOn = minBright + ((1.0 - minBright) * (float) delta / (float) millisUntilChange[counter]);
       }
+    }
+    if (percentOn > 1.0) {
+      percentOn = 1.0;
     }
     tempColor = colors[counter % numColors];
     tempColor.fadeLightBy(255 - int(255 * percentOn));

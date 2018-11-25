@@ -35,7 +35,7 @@ void DrumLight::setNextColor(CRGB _color) {
   nextColor = _color;
 }
 
-void DrumLight::setAll(float percentOn, unsigned char xIndex = 0) {
+void DrumLight::setAll(float percentOn, unsigned char xIndex) {
   int counter;
   CRGB currentDim;
 
@@ -46,7 +46,7 @@ void DrumLight::setAll(float percentOn, unsigned char xIndex = 0) {
   }
 }
 
-void DrumLight::wipeLEDs(float percentOn, unsigned char xIndex = 0) {
+void DrumLight::wipeLEDs(float percentOn, unsigned char xIndex) {
   int counter;
   float currentPosition = (percentOn * numLeds) - 1.0;
   float currentDimPercent;
@@ -65,7 +65,7 @@ void DrumLight::wipeLEDs(float percentOn, unsigned char xIndex = 0) {
   }
 }
 
-void DrumLight::wipeLoop(unsigned char xIndex = 0) {
+void DrumLight::wipeLoop(unsigned char xIndex) {
   unsigned long millisCurrent = millis();
   float percentOn = 0.0;
 

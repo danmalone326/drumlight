@@ -1,4 +1,7 @@
+// This supresses the pragma version warning FASTLED produces
+#define FASTLED_INTERNAL
 #include <FastLED.h>
+
 #include "DrumSensor.h"
 #include "DrumLight.h"
 #include "ChristmasLights.h"
@@ -16,25 +19,33 @@ unsigned long debugCounter = 0;
 CRGB leds[NUM_LEDS];
 const int ledPin = 7;
 
+// For snare (1 drum/sensor)
 // Analog Pin for the first drum sensor
 #define drumSensorPin0 0
 #define drumStartLed0 0
-#define drumNumLeds0 15
+#define drumNumLeds0 22
 
-// Analog Pin for the second drum sensor
-#define drumSensorPin1 1
-#define drumStartLed1 15
-#define drumNumLeds1 8
 
-// Analog Pin for the third drum sensor
-#define drumSensorPin2 2
-#define drumStartLed2 23
-#define drumNumLeds2 12
-
-// Analog Pin for the fourth drum sensor
-#define drumSensorPin3 3
-#define drumStartLed3 35
-#define drumNumLeds3 16
+// For tennor (4 drums/sensors)
+//// Analog Pin for the first drum sensor
+//#define drumSensorPin0 0
+//#define drumStartLed0 0
+//#define drumNumLeds0 15
+//
+//// Analog Pin for the second drum sensor
+//#define drumSensorPin1 1
+//#define drumStartLed1 15
+//#define drumNumLeds1 8
+//
+//// Analog Pin for the third drum sensor
+//#define drumSensorPin2 2
+//#define drumStartLed2 23
+//#define drumNumLeds2 12
+//
+//// Analog Pin for the fourth drum sensor
+//#define drumSensorPin3 3
+//#define drumStartLed3 35
+//#define drumNumLeds3 16
 
 
 
@@ -43,7 +54,7 @@ unsigned char twinkleBrightness = 90;
 unsigned long millisLastTap = 0;
 
 // after X milli-seconds of no drum taps, switch to twinkle
-unsigned long millisToIdle = 5000;
+unsigned long millisToIdle = 3000;
 
 // states
 // 0 = drum

@@ -11,10 +11,10 @@ unsigned long debugCounter = 0;
 
 
 // for Snare
-//#define NUM_LEDS 22
+#define NUM_LEDS 22
 
 // for Tenor
-#define NUM_LEDS 51
+//#define NUM_LEDS 51
 
 CRGB leds[NUM_LEDS];
 const int ledPin = 7;
@@ -24,6 +24,7 @@ const int ledPin = 7;
 #define drumSensorPin0 0
 #define drumStartLed0 0
 #define drumNumLeds0 22
+#define drumEveryX0 1
 
 
 // For tennor (4 drums/sensors)
@@ -31,21 +32,25 @@ const int ledPin = 7;
 //#define drumSensorPin0 0
 //#define drumStartLed0 0
 //#define drumNumLeds0 15
+//#define drumEveryX0 1
 //
 //// Analog Pin for the second drum sensor
 //#define drumSensorPin1 1
 //#define drumStartLed1 15
 //#define drumNumLeds1 8
+//#define drumEveryX1 1
 //
 //// Analog Pin for the third drum sensor
 //#define drumSensorPin2 2
 //#define drumStartLed2 23
 //#define drumNumLeds2 12
+//#define drumEveryX2 1
 //
 //// Analog Pin for the fourth drum sensor
 //#define drumSensorPin3 3
 //#define drumStartLed3 35
 //#define drumNumLeds3 16
+//#define drumEveryX3 1
 
 
 
@@ -78,7 +83,7 @@ unsigned char currentColorIndex = numColors - 1;
 
 #ifdef drumSensorPin0
 DrumSensor drumSensor0(drumSensorPin0);
-DrumLight  drumLight0(&leds[drumStartLed0], drumNumLeds0, 1);
+DrumLight  drumLight0(&leds[drumStartLed0], drumNumLeds0, drumEveryX0);
 
 void tapBegin0() {
   drumLight0.setNextColor(nextColor());
@@ -93,7 +98,7 @@ void tapEnd0() {
 
 #ifdef drumSensorPin1
 DrumSensor drumSensor1(drumSensorPin1);
-DrumLight  drumLight1(&leds[drumStartLed1], drumNumLeds1, 1);
+DrumLight  drumLight1(&leds[drumStartLed1], drumNumLeds1, drumEveryX1);
 
 void tapBegin1() {
   drumLight1.setNextColor(nextColor());
@@ -108,7 +113,7 @@ void tapEnd1() {
 
 #ifdef drumSensorPin2
 DrumSensor drumSensor2(drumSensorPin2);
-DrumLight  drumLight2(&leds[drumStartLed2], drumNumLeds2, 1);
+DrumLight  drumLight2(&leds[drumStartLed2], drumNumLeds2, drumEveryX2);
 
 void tapBegin2() {
   drumLight2.setNextColor(nextColor());
@@ -123,7 +128,7 @@ void tapEnd2() {
 
 #ifdef drumSensorPin3
 DrumSensor drumSensor3(drumSensorPin3);
-DrumLight  drumLight3(&leds[drumStartLed3], drumNumLeds3, 1);
+DrumLight  drumLight3(&leds[drumStartLed3], drumNumLeds3, drumEveryX3);
 
 void tapBegin3() {
   drumLight3.setNextColor(nextColor());

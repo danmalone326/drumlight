@@ -12,6 +12,9 @@
 #define DrumLight_h
 
 #include "Arduino.h"
+
+// This supresses the pragma version warning FASTLED produces
+#define FASTLED_INTERNAL
 #include <FastLED.h>
 
 class DrumLight
